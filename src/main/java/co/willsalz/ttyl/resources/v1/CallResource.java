@@ -1,29 +1,19 @@
 package co.willsalz.ttyl.resources.v1;
 
-import co.willsalz.ttyl.entities.CallRequest;
-import co.willsalz.ttyl.resources.IndexResource;
 import co.willsalz.ttyl.service.PhoneService;
+import co.willsalz.ttyl.views.SuccessView;
 import com.codahale.metrics.annotation.Timed;
 import com.twilio.rest.api.v2010.account.Call;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 @Path("v1")
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.TEXT_HTML)
-@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
 public class CallResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(CallResource.class);
     private final PhoneService phoneService;
 
     public CallResource(final PhoneService phoneService) {
@@ -31,18 +21,14 @@ public class CallResource {
     }
 
     @POST
-    @Timed
     @Path("call")
-    public Response makeCall(@NotNull @Valid final CallRequest request) {
+    @Timed
+    public SuccessView makeCall(@NotEmpty @FormParam("phone-number") String phoneNumber,
+                                @NotEmpty @FormParam("zip") String zip) {
 
-        logger.debug("Call Request: {}", request);
-        final Call call = phoneService.makeCall(
-                request.getFrom(),
-                request.getTo()
-        );
-        logger.debug("Call: {}", call);
+        final Call call = phoneService.makeCall(phoneNumber);
 
-        return Response.temporaryRedirect(UriBuilder.fromResource(IndexResource.class).build()).build();
+        return new SuccessView();
 
     }
 

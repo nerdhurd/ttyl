@@ -10,15 +10,16 @@ import java.net.URI;
 public class PhoneService {
 
     private final TwilioRestClient client;
+    private final PhoneNumber from_;
 
-    public PhoneService(final TwilioRestClient client) {
+    public PhoneService(final TwilioRestClient client, final String phoneNumber) {
         this.client = client;
+        this.from_ = new PhoneNumber(phoneNumber);
     }
 
-    public Call makeCall(final String from, final String to) {
+    public Call makeCall(final String to) {
 
         final PhoneNumber to_ = new PhoneNumber(to);
-        final PhoneNumber from_ = new PhoneNumber(from);
         final URI uri = URI.create("http://demo.twilio.com/welcome/voice/");
 
         return new CallCreator(to_, from_, uri).create(client);
