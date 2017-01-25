@@ -19,6 +19,7 @@
         <dropwizard.version>1.0.5</dropwizard.version>
         <twilio.version>7.4.0</twilio.version>
         <junit.version>4.12</junit.version>
+        <assertj.version>3.6.1</assertj.version>
     </properties>
 
     <dependencies>
@@ -28,11 +29,15 @@
             <artifactId>dropwizard-core</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>
+
+        <!-- ViewBundle -->
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-views</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>
+
+        <!-- Mustache Views-->
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-views-mustache</artifactId>
@@ -51,6 +56,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
 
