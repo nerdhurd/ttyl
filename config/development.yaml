@@ -1,10 +1,11 @@
 server:
-  type: simple
+  type: default
   applicationContextPath: /
-  adminContextPath: /admin
-  connector:
-    type: http
-    port: ${PORT:-8888}
+  applicationConnectors:
+    - type: http
+      port: ${PORT:-8888}
+  # disable admin
+  adminConnectors: []
 
 logging:
   level: INFO

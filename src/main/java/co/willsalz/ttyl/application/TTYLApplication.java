@@ -36,7 +36,7 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         bootstrap.setConfigurationSourceProvider(
                 new SubstitutingSourceProvider(
                         bootstrap.getConfigurationSourceProvider(),
-                        new EnvironmentVariableSubstitutor(false)
+                        new EnvironmentVariableSubstitutor(true)
                 )
         );
 
