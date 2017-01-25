@@ -63,7 +63,7 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         env.jersey().register(new CallResource(phoneService));
         env.jersey().register(new ConnectCallResource());
 
-        // Register Endpoints
+        // Register Healthchecks
         env.healthChecks().register("twilio", new TwilioHealthCheck(twilio));
 
     }
