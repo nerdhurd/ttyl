@@ -25,9 +25,7 @@ public class PhoneService {
     public Call makeCall(final String to) {
 
         final PhoneNumber to_ = new PhoneNumber(to);
-        final URI uri = UriBuilder.fromUri("http://ttyl-9000.herokuapp.com")
-                .path("connectCall")
-                .build();
+        final URI uri = UriBuilder.fromUri("http://ttyl-9000.herokuapp.com/v1/connectCall").build();
         return new CallCreator(to_, from_, uri).create(client);
 
     }

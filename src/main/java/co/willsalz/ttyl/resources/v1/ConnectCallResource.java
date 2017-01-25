@@ -7,14 +7,14 @@ import com.twilio.twiml.TwiMLException;
 import com.twilio.twiml.VoiceResponse;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
 @Path("v1")
 public class ConnectCallResource {
 
-    @GET
+    @POST
     @Path("connectCall")
     @Timed
     public TwiML connectCall(@Context HttpServletRequest req) throws TwiMLException {
