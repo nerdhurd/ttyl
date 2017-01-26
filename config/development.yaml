@@ -1,6 +1,7 @@
 server:
   type: default
   applicationContextPath: /
+  rootPath: /api/
   applicationConnectors:
     - type: http
       port: ${PORT:-8888}
