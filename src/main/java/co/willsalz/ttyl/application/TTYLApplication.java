@@ -13,6 +13,7 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.server.filter.CsrfProtectionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,7 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
 
         // Register Middleware
         env.jersey().register(new TwimlMessageBodyWriter());
+        env.jersey().register(new CsrfProtectionFilter());
 
         // Services
         final TwilioRestClient twilio = cfg.getTwilioConfiguration().build(env);
