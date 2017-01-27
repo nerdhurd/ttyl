@@ -3,6 +3,7 @@ package co.willsalz.ttyl.resources.v1;
 import co.willsalz.ttyl.entities.CallRequest;
 import co.willsalz.ttyl.service.PhoneService;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.ImmutableMap;
 import com.twilio.rest.api.v2010.account.Call;
 
 import javax.validation.Valid;
@@ -34,7 +35,7 @@ public class CallResource {
         final Call call = phoneService.makeCall(callRequest.getTo());
 
         return Response.accepted()
-                .entity(Entity.json(null))
+                .entity(Entity.json(ImmutableMap.of("status", Response.Status.ACCEPTED)))
                 .build();
 
     }
