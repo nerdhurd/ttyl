@@ -1,9 +1,9 @@
 ttyl MPV
 --------
 * create single page web/js page
-    * setup and serve index.html and site.js
+    * ~~setup and serve index.html and site.js~~
     * Main page
-        * make ajax request to call api, display error
+        * ~~make ajax request to call api~~, display error
         * make call to representative API, we may have to end up hosting this ourselves. 
 
 * security setup
