@@ -1,4 +1,5 @@
 # ttyl
+[![Build Status](https://travis-ci.org/willsalz/ttyl.svg?branch=master)](https://travis-ci.org/willsalz/ttyl)
 
 ## dependencies
 - java 8
