@@ -1,0 +1,8 @@
+server:
+  type: default
+  rootPath: /api/
+
+twilio:
+  accountSid: FAKE_ACCOUNT_SID
+  authToken: FAKE_AUTH_TOKEN
+  phoneNumber: 1-800-CAL-LATT

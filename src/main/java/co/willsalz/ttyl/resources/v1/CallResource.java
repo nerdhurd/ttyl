@@ -34,8 +34,8 @@ public class CallResource {
 
         final Call call = phoneService.makeCall(callRequest.getTo());
 
-        return Response.accepted()
-                .entity(Entity.json(ImmutableMap.of("status", Response.Status.ACCEPTED)))
+        return Response.ok()
+                .entity(Entity.json(ImmutableMap.of("status", Response.Status.OK)))
                 .build();
 
     }

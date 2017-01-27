@@ -29,6 +29,14 @@
             <artifactId>dropwizard-core</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>
+
+        <!-- HTTP Client-->
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-client</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
         <!-- AssetBundle -->
         <dependency>
             <groupId>io.dropwizard</groupId>
