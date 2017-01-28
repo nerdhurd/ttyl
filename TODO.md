@@ -1,41 +1,62 @@
 ttyl MPV
 --------
 * create single page web/js page
-    * ~~setup and serve index.html and site.js~~
+    x ~~setup and serve index.html and site.js~~
     * Main page
         * ~~make ajax request to call api~~, display error
         * make call to representative API, we may have to end up hosting this ourselves. 
 
-* security setup
-    * when someone makes a call, we text them to verify that they asked for it?
-        * this maybe can wait until we're scheduling? But we gotta have it before shipping. 
 
-* call endpoint
+* make_call endpoint
     * make it connect two phone numbers
 
 * SSL on Heroku -- non-negotiable
+* Monitoring?
 
 * Dev Environment
     * hot loading server. Got to be able to build and change things fast
+        * Apparently literally impossible on JAVA, WTF
 
 MPV +1
 ------
 * Scheduling
-    * call endpoint
+    * scheduled_call endpoint POST/GET/PUT/DELETE
         * add a scheduling database record
-        * run a background process that processes schedules, makes calls
+        * If they've never confirmed their number before, don't let them schedule more than one call until they do.
+
+    * confirm-number endpoint
+        * when someone schedules a call, we text them to verify that they asked for it
 
     * Frontend
         * create call scheduling page
             * should be able to delete a scheduled call
+            * need a date-picker
+                * can just be restricted to a week in advace
 
+    * Scheduler
+        * run all the time, scheudle calls whose time has come
+        * just calls the make_call API?
+
+
+PUBLIC USE BLOCK SHIPS
+----------------------
+* Talk To A Lawyer
+* TOS?
+* Privacy Page
+* SSL Everywhere
 
 
 SOMEDAY MAYBE
 -------------
 * accounts
     * lets you skip the verify step from then on
+    * Once you click a verification link, you are logged in. No other login service.
+        * Can we log you into your desktop session as well? 
+            * could be abused, we'd have to have a "log me out everywhere" button
+    * saves your ZIP, too
+    * lets you see future scheduled calls
 * Recurring scheduled calls
+* schedule a row of calls. Every time one hangs up we start the next.
 * Reminders for scripts for what to say when you call
 * subscribing to notifications for things to call about
 * make the zip code picker zip specific instead of number specific
@@ -86,6 +107,8 @@ SECURITY CONCERNS
 =================
 * Let's not keep any data on when you called people before. What's the point? 
 * Let's not keep any data we don't have to. Your info is on our servers while things are scheduled, then gone
+* Don't let anyone use this to spam texts to an enemy
+* Don't let us accidetially use Twillio to make thousands of calls to one number at once
 
 
 
