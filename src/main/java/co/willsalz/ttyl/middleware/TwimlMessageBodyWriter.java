@@ -1,4 +1,4 @@
-package co.willsalz.ttyl.serialization;
+package co.willsalz.ttyl.middleware;
 
 import com.twilio.twiml.TwiML;
 import com.twilio.twiml.TwiMLException;

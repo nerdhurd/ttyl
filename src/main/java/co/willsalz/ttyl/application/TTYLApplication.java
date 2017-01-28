@@ -2,9 +2,10 @@ package co.willsalz.ttyl.application;
 
 import co.willsalz.ttyl.configuration.TTYLConfiguration;
 import co.willsalz.ttyl.healthchecks.TwilioHealthCheck;
+import co.willsalz.ttyl.middleware.CsrfFilter;
+import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.resources.v1.CallResource;
 import co.willsalz.ttyl.resources.v1.ConnectCallResource;
-import co.willsalz.ttyl.serialization.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.service.PhoneService;
 import com.twilio.http.TwilioRestClient;
 import io.dropwizard.Application;
@@ -13,7 +14,6 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.glassfish.jersey.server.filter.CsrfProtectionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
 
         // Register Middleware
         env.jersey().register(new TwimlMessageBodyWriter());
-        env.jersey().register(new CsrfProtectionFilter());
+        env.jersey().register(new CsrfFilter());
 
         // Services
         final TwilioRestClient twilio = cfg.getTwilioConfiguration().build(env);
