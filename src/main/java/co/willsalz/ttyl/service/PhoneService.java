@@ -1,5 +1,6 @@
 package co.willsalz.ttyl.service;
 
+import co.willsalz.ttyl.resources.v1.ConnectCallResource;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.rest.api.v2010.account.Call;
 import com.twilio.rest.api.v2010.account.CallCreator;
@@ -16,6 +17,7 @@ public class PhoneService {
 
     private final TwilioRestClient client;
     private final PhoneNumber from_;
+    private final String baseURL = "http://ttyp-9000.herokuapp.com";
 
     public PhoneService(final TwilioRestClient client, final String phoneNumber) {
         this.client = client;
@@ -25,7 +27,9 @@ public class PhoneService {
     public Call makeCall(final String to) {
 
         final PhoneNumber to_ = new PhoneNumber(to);
-        final URI uri = UriBuilder.fromUri("http://ttyl-9000.herokuapp.com/v1/connectCall").build();
+        final URI uri = UriBuilder.fromUri(baseURL)
+                .path(ConnectCallResource.class)
+                .build();
         return new CallCreator(to_, from_, uri).create(client);
 
     }

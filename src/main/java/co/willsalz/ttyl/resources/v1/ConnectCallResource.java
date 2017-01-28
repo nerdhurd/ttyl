@@ -11,11 +11,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
-@Path("v1")
+@Path("v1/connectCall")
 public class ConnectCallResource {
 
     @POST
-    @Path("connectCall")
     @Timed
     public TwiML connectCall(@Context HttpServletRequest req) throws TwiMLException {
 

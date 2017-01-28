@@ -16,7 +16,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("v1")
+@Path("v1/call")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CallResource {
@@ -28,7 +28,6 @@ public class CallResource {
     }
 
     @POST
-    @Path("call")
     @Timed
     public Response makeCall(@NotNull @Valid final CallRequest callRequest) {
 
