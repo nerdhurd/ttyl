@@ -7,7 +7,7 @@
 
 ## build
 ```lang=bash
-$ mvn package
+$ mvn package -DskipTests=true
 ```
 
 ## test
