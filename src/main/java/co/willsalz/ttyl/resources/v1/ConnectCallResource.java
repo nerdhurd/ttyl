@@ -7,6 +7,7 @@ import com.twilio.twiml.TwiML;
 import com.twilio.twiml.TwiMLException;
 import com.twilio.twiml.VoiceResponse;
 
+import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("v1/connectCall")
 @Produces(MediaType.APPLICATION_XML)
+@PermitAll
 @CsrfFilter.CsrfFilterBypass
 public class ConnectCallResource {
 

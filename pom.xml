@@ -44,6 +44,13 @@
             <version>${dropwizard.version}</version>
         </dependency>
 
+        <!-- Auth -->
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-auth</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
         <!-- Twilio -->
         <dependency>
             <groupId>com.twilio.sdk</groupId>
