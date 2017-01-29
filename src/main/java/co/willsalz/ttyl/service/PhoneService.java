@@ -17,7 +17,7 @@ public class PhoneService {
 
     private final TwilioRestClient client;
     private final PhoneNumber from_;
-    private final String baseURL = "http://ttyp-9000.herokuapp.com";
+    private final String baseURL = "http://ttyp-9000.herokuapp.com/api";
 
     public PhoneService(final TwilioRestClient client, final String phoneNumber) {
         this.client = client;
