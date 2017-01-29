@@ -6,10 +6,15 @@ import co.willsalz.ttyl.middleware.CsrfFilter;
 import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.resources.v1.CallResource;
 import co.willsalz.ttyl.resources.v1.ConnectCallResource;
+import co.willsalz.ttyl.security.TwilioAuthenticator;
+import co.willsalz.ttyl.security.TwilioPrinicipal;
 import co.willsalz.ttyl.service.PhoneService;
 import com.twilio.http.TwilioRestClient;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
@@ -55,12 +60,27 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         // Register Middleware
         env.jersey().register(new TwimlMessageBodyWriter());
         env.jersey().register(new CsrfFilter());
+        env.jersey().register(
+                new AuthDynamicFeature(
+                        new BasicCredentialAuthFilter.Builder<TwilioPrinicipal>()
+                                .setAuthenticator(
+                                        new TwilioAuthenticator(
+                                                new BasicCredentials(
+                                                        cfg.getAuth().getTwilioUsername(),
+                                                        cfg.getAuth().getTwilioPassword()
+                                                )
+                                        )
+                                )
+                                .setRealm("twilio")
+                                .buildAuthFilter()
+                )
+        );
 
         // Services
-        final TwilioRestClient twilio = cfg.getTwilioConfiguration().build(env);
+        final TwilioRestClient twilio = cfg.getTwilioFactory().build(env);
         final PhoneService phoneService = new PhoneService(
                 twilio,
-                cfg.getTwilioConfiguration().getPhoneNumber()
+                cfg.getTwilioFactory().getPhoneNumber()
         );
 
         // Register Resources

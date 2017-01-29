@@ -13,13 +13,22 @@ public class TTYLConfiguration extends Configuration {
     @NotNull
     private final TwilioConfiguration twilioConfiguration;
 
+    @Valid
+    @NotNull
+    private final Authentication authentication;
+
     @JsonCreator
-    public TTYLConfiguration(@JsonProperty("twilio") final TwilioConfiguration twilioConfiguration) {
+    public TTYLConfiguration(@JsonProperty("twilio") final TwilioConfiguration twilioConfiguration,
+                             @JsonProperty("authentication") final Authentication authentication) {
         this.twilioConfiguration = twilioConfiguration;
+        this.authentication = authentication;
     }
 
-    public TwilioConfiguration getTwilioConfiguration() {
+    public TwilioConfiguration getTwilioFactory() {
         return twilioConfiguration;
     }
 
+    public Authentication getAuth() {
+        return authentication;
+    }
 }
