@@ -53,7 +53,7 @@ public class CallResourceTest {
                 .request()
                 .post(Entity.json(new CallRequest(somePhoneNumber)));
 
-        assertThat(res.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+        assertThat(res.getStatus()).isEqualTo(Response.Status.NO_CONTENT.getStatusCode());
 
         verify(phoneService, times(1)).makeCall(somePhoneNumber);
 

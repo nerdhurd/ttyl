@@ -11,11 +11,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.Map;
 
 @Path("v1/call")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -34,12 +31,7 @@ public class CallResource {
 
         final Call call = phoneService.makeCall(callRequest.getTo());
 
-        final Map<String, String> response = new HashMap<>();
-        response.put("status", "ok");
-
-        return Response.ok()
-                .entity(Entity.json(response))
-                .build();
+        return Response.noContent().build();
 
     }
 
