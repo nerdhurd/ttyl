@@ -29,7 +29,7 @@ public class ConnectCallResource {
     @Timed
     public TwiML connectCall(@Context HttpServletRequest req) throws TwiMLException {
 
-        logger.debug("{}", req);
+        logger.info("{}", req);
 
         // Build our response
         final VoiceResponse voiceResponse = new VoiceResponse.Builder()

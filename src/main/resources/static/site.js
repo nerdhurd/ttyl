@@ -1,7 +1,11 @@
 $(function() {
+    console.log("Ready!");
+
     $("#register-form").submit(function(e){
+        // Prevent Form Submission
         e.preventDefault();
-        var formData = new FormData(e);
+
+        // Submit the form via a POST
         $.ajax({
             url: '/api/v1/call',
             type: 'post',
