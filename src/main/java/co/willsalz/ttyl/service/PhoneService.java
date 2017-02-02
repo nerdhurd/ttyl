@@ -50,7 +50,7 @@ public class PhoneService {
 
         final PhoneNumber to_ = new PhoneNumber(to);
         final URI uri = UriBuilder.fromUri(baseUri)
-//                .userInfo(twilioCredentials.getUsername() + ":" + twilioCredentials.getPassword())
+                .userInfo(twilioCredentials.getUsername() + ":" + twilioCredentials.getPassword())
                 .path(ConnectCallResource.class)
                 .build();
         return new CallCreator(to_, new PhoneNumber(from), uri).create(client);
