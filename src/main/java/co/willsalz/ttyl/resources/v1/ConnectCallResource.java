@@ -6,6 +6,8 @@ import com.twilio.twiml.Say;
 import com.twilio.twiml.TwiML;
 import com.twilio.twiml.TwiMLException;
 import com.twilio.twiml.VoiceResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +23,13 @@ import javax.ws.rs.core.MediaType;
 @CsrfFilter.CsrfFilterBypass
 public class ConnectCallResource {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConnectCallResource.class);
+
     @POST
     @Timed
     public TwiML connectCall(@Context HttpServletRequest req) throws TwiMLException {
+
+        logger.debug("{}", req);
 
         // Build our response
         final VoiceResponse voiceResponse = new VoiceResponse.Builder()

@@ -7,20 +7,21 @@ import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.resources.v1.CallResource;
 import co.willsalz.ttyl.resources.v1.ConnectCallResource;
 import co.willsalz.ttyl.security.TwilioAuthenticator;
-import co.willsalz.ttyl.security.TwilioPrinicipal;
 import co.willsalz.ttyl.service.PhoneService;
 import com.twilio.http.TwilioRestClient;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
-import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.container.ContainerRequestFilter;
 
 public class TTYLApplication extends Application<TTYLConfiguration> {
 
@@ -57,30 +58,32 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
 
     public void run(final TTYLConfiguration cfg, final Environment env) throws Exception {
 
+        // Create Inbound Auth Filter
+        final ContainerRequestFilter authFilter = new BasicCredentialAuthFilter.Builder<PrincipalImpl>()
+                .setAuthenticator(
+                        new TwilioAuthenticator(
+                                cfg.getAuthenticationConfiguration()
+                                        .get("twilio")
+                                        .orElseThrow(IllegalArgumentException::new)
+                        )
+                )
+                .setRealm("twilio")
+                .buildAuthFilter();
+
         // Register Middleware
         env.jersey().register(new TwimlMessageBodyWriter());
         env.jersey().register(new CsrfFilter());
-        env.jersey().register(
-                new AuthDynamicFeature(
-                        new BasicCredentialAuthFilter.Builder<TwilioPrinicipal>()
-                                .setAuthenticator(
-                                        new TwilioAuthenticator(
-                                                new BasicCredentials(
-                                                        cfg.getAuth().getTwilioUsername(),
-                                                        cfg.getAuth().getTwilioPassword()
-                                                )
-                                        )
-                                )
-                                .setRealm("twilio")
-                                .buildAuthFilter()
-                )
-        );
+        env.jersey().register(new AuthDynamicFeature(authFilter));
 
         // Services
-        final TwilioRestClient twilio = cfg.getTwilioFactory().build(env);
+        final TwilioRestClient twilio = cfg.getTwilioConfiguration().build(env);
         final PhoneService phoneService = new PhoneService(
                 twilio,
-                cfg.getTwilioFactory().getPhoneNumber()
+                cfg.getServiceConfiguration().getBaseUri(),
+                cfg.getAuthenticationConfiguration()
+                        .get("twilio")
+                        .orElseThrow(IllegalArgumentException::new),
+                cfg.getTwilioConfiguration().getPhoneNumbers()
         );
 
         // Register Resources

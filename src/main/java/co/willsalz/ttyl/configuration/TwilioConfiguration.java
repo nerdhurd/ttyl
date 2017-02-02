@@ -6,6 +6,8 @@ import com.twilio.http.TwilioRestClient;
 import io.dropwizard.setup.Environment;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import java.util.List;
+
 public class TwilioConfiguration {
 
     @NotEmpty
@@ -15,15 +17,15 @@ public class TwilioConfiguration {
     private final String authToken;
 
     @NotEmpty
-    private final String phoneNumber;
+    private final List<String> phoneNumbers;
 
     @JsonCreator
     public TwilioConfiguration(@JsonProperty("accountSid") String accountSid,
                                @JsonProperty("authToken") String authToken,
-                               @JsonProperty("phoneNumber") String phoneNumber) {
+                               @JsonProperty("phoneNumbers") List<String> phoneNumbers) {
         this.accountSid = accountSid;
         this.authToken = authToken;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumbers = phoneNumbers;
     }
 
     public TwilioRestClient build(final Environment environment) {
@@ -31,7 +33,7 @@ public class TwilioConfiguration {
                 .build();
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public List<String> getPhoneNumbers() {
+        return phoneNumbers;
     }
 }

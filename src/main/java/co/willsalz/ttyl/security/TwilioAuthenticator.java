@@ -2,11 +2,12 @@ package co.willsalz.ttyl.security;
 
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentials;
 
 import java.util.Optional;
 
-public class TwilioAuthenticator implements Authenticator<BasicCredentials, TwilioPrinicipal> {
+public class TwilioAuthenticator implements Authenticator<BasicCredentials, PrincipalImpl> {
 
     private final BasicCredentials credentials;
 
@@ -15,9 +16,9 @@ public class TwilioAuthenticator implements Authenticator<BasicCredentials, Twil
     }
 
     @Override
-    public Optional<TwilioPrinicipal> authenticate(final BasicCredentials inputCredentials) throws AuthenticationException {
+    public Optional<PrincipalImpl> authenticate(final BasicCredentials inputCredentials) throws AuthenticationException {
         if (this.credentials.equals(inputCredentials)) {
-            return Optional.of(TwilioPrinicipal.INSTANCE);
+            return Optional.of(new PrincipalImpl(inputCredentials.getUsername()));
         }
         return Optional.empty();
     }

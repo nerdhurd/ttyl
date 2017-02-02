@@ -1,13 +1,19 @@
 package co.willsalz.ttyl.service;
 
+import com.google.common.collect.ImmutableList;
 import com.twilio.http.Request;
 import com.twilio.http.Response;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.rest.api.v2010.account.Call;
+import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.jackson.Jackson;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -20,9 +26,11 @@ import static org.mockito.Mockito.when;
 
 public class PhoneServiceTest {
 
-    private final String sourcePhoneNumber = "1 (800) 934-6489";
+    private final List<String> sourcePhoneNumbers = ImmutableList.of("1 (800) 934-6489");
     private final TwilioRestClient client = mock(TwilioRestClient.class);
-    private final PhoneService phoneService = new PhoneService(client, sourcePhoneNumber);
+    private final URI baseUri = UriBuilder.fromUri("http://localhost").build();
+    private final BasicCredentials credentials = new BasicCredentials("username", "password");
+    private final PhoneService phoneService = new PhoneService(client, baseUri, credentials, sourcePhoneNumbers);
 
     @Before
     public void setUp() throws Exception {
@@ -38,6 +46,11 @@ public class PhoneServiceTest {
     public void tearDown() throws Exception {
         verifyNoMoreInteractions(client);
         reset(client);
+    }
+
+    @Test
+    public void testGetRandomFrom() throws Exception {
+        assertThat(phoneService.randomFrom()).isEqualTo("1 (800) 934-6489");
     }
 
     @Test

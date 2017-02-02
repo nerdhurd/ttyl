@@ -1,9 +1,9 @@
 package co.willsalz.ttyl.resources.v1;
 
 import co.willsalz.ttyl.security.TwilioAuthenticator;
-import co.willsalz.ttyl.security.TwilioPrinicipal;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.testing.junit.ResourceTestRule;
@@ -33,7 +33,7 @@ public class ConnectCallResourceTest {
     public ResourceTestRule rule = ResourceTestRule
             .builder()
             .setTestContainerFactory(new InMemoryTestContainerFactory())
-            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<TwilioPrinicipal>()
+            .addProvider(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<PrincipalImpl>()
                     .setAuthenticator(new TwilioAuthenticator(new BasicCredentials(USERNAME, PASSWORD)))
                     .setRealm(REALM)
                     .buildAuthFilter()))
