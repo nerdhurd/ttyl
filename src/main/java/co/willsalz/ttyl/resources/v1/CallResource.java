@@ -3,8 +3,9 @@ package co.willsalz.ttyl.resources.v1;
 import co.willsalz.ttyl.entities.CallRequest;
 import co.willsalz.ttyl.service.PhoneService;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.ImmutableMap;
 import com.twilio.rest.api.v2010.account.Call;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,7 +13,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -20,6 +20,8 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CallResource {
+
+    private static final Logger logger = LoggerFactory.getLogger(CallResource.class);
 
     private final PhoneService phoneService;
 
@@ -32,10 +34,7 @@ public class CallResource {
     public Response makeCall(@NotNull @Valid final CallRequest callRequest) {
 
         final Call call = phoneService.makeCall(callRequest.getTo());
-
-        return Response.ok()
-                .entity(Entity.json(ImmutableMap.of("status", Response.Status.OK)))
-                .build();
+        return Response.noContent().build();
 
     }
 

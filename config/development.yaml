@@ -7,6 +7,9 @@ server:
       port: ${PORT:-8888}
   # disable admin
   adminConnectors: []
+  # disable request logging
+  requestLog:
+    appenders: []
 
 logging:
   level: INFO
@@ -19,4 +22,12 @@ metrics:
 twilio:
   accountSid: ${TWILIO_ACCOUNT_SID:-}
   authToken: ${TWILIO_AUTH_TOKEN:-}
-  phoneNumber: ${TWILIO_PHONE_NUMBER:-}
+  phoneNumbers:
+    - ${TWILIO_PHONE_NUMBER:-}
+
+authentication:
+  credentials:
+    twilio: ${TWILIO_PASSWORD:-}
+
+service:
+  baseUri: https://ttyl-9000.herokuapp.com/api
