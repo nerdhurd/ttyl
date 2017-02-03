@@ -2,6 +2,8 @@ package co.willsalz.ttyl.resources.v1;
 
 import co.willsalz.ttyl.middleware.CsrfFilter;
 import com.codahale.metrics.annotation.Timed;
+import com.twilio.twiml.Dial;
+import com.twilio.twiml.Number;
 import com.twilio.twiml.Say;
 import com.twilio.twiml.TwiML;
 import com.twilio.twiml.TwiMLException;
@@ -29,13 +31,21 @@ public class ConnectCallResource {
     @Timed
     public TwiML connectCall(@Context HttpServletRequest req) throws TwiMLException {
 
-        logger.info("{}", req);
+        // TODO(wjs): lookup ephemeral call [ phone #, zip, etc ]
 
         // Build our response
         final VoiceResponse voiceResponse = new VoiceResponse.Builder()
                 .say(
-                        new Say.Builder("Thanks for calling TTYL!")
+                        new Say.Builder("Connecting you now…")
                                 .voice(Say.Voice.ALICE)
+                                .build()
+                )
+                .dial(
+                        new Dial.Builder()
+                                .number(
+                                        new Number.Builder("+15005550006")
+                                                .build()
+                                )
                                 .build()
                 )
                 .build();

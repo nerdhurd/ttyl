@@ -1,7 +1,7 @@
 package co.willsalz.ttyl.resources.v1;
 
 import co.willsalz.ttyl.entities.CallRequest;
-import co.willsalz.ttyl.service.PhoneService;
+import co.willsalz.ttyl.service.CallService;
 import com.twilio.rest.api.v2010.account.Call;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.After;
@@ -22,27 +22,27 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class CallResourceTest {
+public class StartCallResourceTest {
 
     private final String somePhoneNumber = "1 (800) 934-6489";
-    private final PhoneService phoneService = mock(PhoneService.class);
+    private final CallService callService = mock(CallService.class);
     private final Call call = mock(Call.class);
 
     @Rule
     public final ResourceTestRule resource = ResourceTestRule
             .builder()
-            .addResource(new CallResource(phoneService))
+            .addResource(new StartCallResource(callService))
             .build();
 
     @Before
     public void setUp() throws Exception {
-        when(phoneService.makeCall(anyString())).thenReturn(call);
+        when(callService.makeCall(anyString())).thenReturn(call);
     }
 
     @After
     public void tearDown() throws Exception {
-        verifyNoMoreInteractions(phoneService, call);
-        reset(phoneService, call);
+        verifyNoMoreInteractions(callService, call);
+        reset(callService, call);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class CallResourceTest {
 
         assertThat(res.getStatus()).isEqualTo(Response.Status.NO_CONTENT.getStatusCode());
 
-        verify(phoneService, times(1)).makeCall(somePhoneNumber);
+        verify(callService, times(1)).makeCall(somePhoneNumber);
 
     }
 

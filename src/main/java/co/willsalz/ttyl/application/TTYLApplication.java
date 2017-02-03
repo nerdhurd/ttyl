@@ -4,10 +4,11 @@ import co.willsalz.ttyl.configuration.TTYLConfiguration;
 import co.willsalz.ttyl.healthchecks.TwilioHealthCheck;
 import co.willsalz.ttyl.middleware.CsrfFilter;
 import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
-import co.willsalz.ttyl.resources.v1.CallResource;
+import co.willsalz.ttyl.repositories.PhoneNumberRepository;
 import co.willsalz.ttyl.resources.v1.ConnectCallResource;
+import co.willsalz.ttyl.resources.v1.StartCallResource;
 import co.willsalz.ttyl.security.TwilioAuthenticator;
-import co.willsalz.ttyl.service.PhoneService;
+import co.willsalz.ttyl.service.CallService;
 import com.twilio.http.TwilioRestClient;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
@@ -75,19 +76,24 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         env.jersey().register(new CsrfFilter());
         env.jersey().register(new AuthDynamicFeature(authFilter));
 
+        // Repositories + Gateways
+        final PhoneNumberRepository phoneNumbers = new PhoneNumberRepository(
+                cfg.getTwilioConfiguration().getPhoneNumbers()
+        );
+
         // Services
         final TwilioRestClient twilio = cfg.getTwilioConfiguration().build(env);
-        final PhoneService phoneService = new PhoneService(
+        final CallService callService = new CallService(
                 twilio,
                 cfg.getServiceConfiguration().getBaseUri(),
                 cfg.getAuthenticationConfiguration()
                         .get("twilio")
                         .orElseThrow(IllegalArgumentException::new),
-                cfg.getTwilioConfiguration().getPhoneNumbers()
+                phoneNumbers
         );
 
         // Register Resources
-        env.jersey().register(new CallResource(phoneService));
+        env.jersey().register(new StartCallResource(callService));
         env.jersey().register(new ConnectCallResource());
 
         // Register Healthchecks

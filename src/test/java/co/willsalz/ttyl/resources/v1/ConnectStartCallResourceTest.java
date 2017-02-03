@@ -21,7 +21,7 @@ import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConnectCallResourceTest {
+public class ConnectStartCallResourceTest {
 
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
@@ -74,7 +74,7 @@ public class ConnectCallResourceTest {
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
         final String body = response.readEntity(String.class);
-        assertThat(body).contains("Thanks for calling TTYL!");
+        assertThat(body).contains("<Dial>");
     }
 
 }

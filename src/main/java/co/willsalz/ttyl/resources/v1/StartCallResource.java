@@ -1,7 +1,7 @@
 package co.willsalz.ttyl.resources.v1;
 
 import co.willsalz.ttyl.entities.CallRequest;
-import co.willsalz.ttyl.service.PhoneService;
+import co.willsalz.ttyl.service.CallService;
 import com.codahale.metrics.annotation.Timed;
 import com.twilio.rest.api.v2010.account.Call;
 
@@ -17,19 +17,21 @@ import javax.ws.rs.core.Response;
 @Path("v1/call")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class CallResource {
+public class StartCallResource {
 
-    private final PhoneService phoneService;
+    private final CallService callService;
 
-    public CallResource(final PhoneService phoneService) {
-        this.phoneService = phoneService;
+    public StartCallResource(final CallService callService) {
+        this.callService = callService;
     }
 
     @POST
     @Timed
-    public Response makeCall(@NotNull @Valid final CallRequest callRequest) {
+    public Response startCall(@NotNull @Valid final CallRequest callRequest) {
 
-        final Call call = phoneService.makeCall(callRequest.getTo());
+        final Call call = callService.makeCall(callRequest.getTo());
+
+        // TODO(wjs): store call [ phone #, zip, etc ] in ephemeral DB for later retrival
 
         return Response.noContent().build();
 

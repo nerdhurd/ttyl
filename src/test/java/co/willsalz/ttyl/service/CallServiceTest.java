@@ -1,10 +1,12 @@
 package co.willsalz.ttyl.service;
 
+import co.willsalz.ttyl.repositories.PhoneNumberRepository;
 import com.google.common.collect.ImmutableList;
 import com.twilio.http.Request;
 import com.twilio.http.Response;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.type.PhoneNumber;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.jackson.Jackson;
 import org.junit.After;
@@ -13,7 +15,6 @@ import org.junit.Test;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -24,13 +25,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class PhoneServiceTest {
+public class CallServiceTest {
 
-    private final List<String> sourcePhoneNumbers = ImmutableList.of("1 (800) 934-6489");
     private final TwilioRestClient client = mock(TwilioRestClient.class);
     private final URI baseUri = UriBuilder.fromUri("http://localhost").build();
     private final BasicCredentials credentials = new BasicCredentials("username", "password");
-    private final PhoneService phoneService = new PhoneService(client, baseUri, credentials, sourcePhoneNumbers);
+    private final PhoneNumberRepository phoneNumbers = new PhoneNumberRepository(ImmutableList.of(new PhoneNumber("18008675309")));
+    private final CallService callService = new CallService(client, baseUri, credentials, phoneNumbers);
 
     @Before
     public void setUp() throws Exception {
@@ -49,14 +50,9 @@ public class PhoneServiceTest {
     }
 
     @Test
-    public void testGetRandomFrom() throws Exception {
-        assertThat(phoneService.randomFrom()).isEqualTo("1 (800) 934-6489");
-    }
-
-    @Test
     public void makeCall() throws Exception {
         final String to = "314-694-1000";
-        final Call call = phoneService.makeCall(to);
+        final Call call = callService.makeCall(to);
 
         assertThat(call).isNotNull();
         assertThat(call.getAccountSid()).isEqualTo("someSid");
