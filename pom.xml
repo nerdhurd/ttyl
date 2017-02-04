@@ -58,6 +58,13 @@
             <version>${twilio.version}</version>
         </dependency>
 
+        <!-- Redis -->
+        <dependency>
+            <groupId>com.bendb.dropwizard</groupId>
+            <artifactId>dropwizard-redis</artifactId>
+            <version>1.0.0-2</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>

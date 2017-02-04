@@ -31,3 +31,6 @@ authentication:
 
 service:
   baseUri: https://ttyl-9000.herokuapp.com/api
+
+redis:
+  url: ${REDIS_URL:-}

@@ -9,6 +9,8 @@ import co.willsalz.ttyl.resources.v1.ConnectCallResource;
 import co.willsalz.ttyl.resources.v1.StartCallResource;
 import co.willsalz.ttyl.security.TwilioAuthenticator;
 import co.willsalz.ttyl.service.CallService;
+import com.bendb.dropwizard.redis.JedisBundle;
+import com.bendb.dropwizard.redis.JedisFactory;
 import com.twilio.http.TwilioRestClient;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
@@ -21,12 +23,16 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.JedisPool;
 
 import javax.ws.rs.container.ContainerRequestFilter;
 
 public class TTYLApplication extends Application<TTYLConfiguration> {
 
     private static final Logger logger = LoggerFactory.getLogger(TTYLApplication.class);
+
+    // Get the Pool from the bundle…
+    private JedisBundle<TTYLConfiguration> jedisBundle;
 
     public static void main(final String[] args) throws Exception {
         new TTYLApplication().run(args);
@@ -55,15 +61,25 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
                 "/",
                 "index.html"
         ));
+
+        // Redis
+        this.jedisBundle = new JedisBundle<TTYLConfiguration>() {
+            @Override
+            public JedisFactory getJedisFactory(final TTYLConfiguration config) {
+                return config.getJedisFactory();
+            }
+        };
+        bootstrap.addBundle(this.jedisBundle);
+
     }
 
-    public void run(final TTYLConfiguration cfg, final Environment env) throws Exception {
+    public void run(final TTYLConfiguration config, final Environment env) throws Exception {
 
         // Create Inbound Auth Filter
         final ContainerRequestFilter authFilter = new BasicCredentialAuthFilter.Builder<PrincipalImpl>()
                 .setAuthenticator(
                         new TwilioAuthenticator(
-                                cfg.getAuthenticationConfiguration()
+                                config.getAuthenticationConfiguration()
                                         .get("twilio")
                                         .orElseThrow(IllegalArgumentException::new)
                         )
@@ -76,17 +92,20 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         env.jersey().register(new CsrfFilter());
         env.jersey().register(new AuthDynamicFeature(authFilter));
 
+        // Clients
+        final TwilioRestClient twilioClient = config.getTwilioConfiguration().build(env);
+        final JedisPool redisPool = this.jedisBundle.getPool();
+
         // Repositories + Gateways
         final PhoneNumberRepository phoneNumbers = new PhoneNumberRepository(
-                cfg.getTwilioConfiguration().getPhoneNumbers()
+                config.getTwilioConfiguration().getPhoneNumbers()
         );
 
         // Services
-        final TwilioRestClient twilio = cfg.getTwilioConfiguration().build(env);
         final CallService callService = new CallService(
-                twilio,
-                cfg.getServiceConfiguration().getBaseUri(),
-                cfg.getAuthenticationConfiguration()
+                twilioClient,
+                config.getServiceConfiguration().getBaseUri(),
+                config.getAuthenticationConfiguration()
                         .get("twilio")
                         .orElseThrow(IllegalArgumentException::new),
                 phoneNumbers
@@ -97,7 +116,8 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         env.jersey().register(new ConnectCallResource());
 
         // Register Healthchecks
-        env.healthChecks().register("twilio", new TwilioHealthCheck(twilio));
+        env.healthChecks().register("twilio", new TwilioHealthCheck(twilioClient));
 
     }
+
 }

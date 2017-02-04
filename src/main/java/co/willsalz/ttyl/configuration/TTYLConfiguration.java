@@ -1,5 +1,6 @@
 package co.willsalz.ttyl.configuration;
 
+import com.bendb.dropwizard.redis.JedisFactory;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
@@ -21,15 +22,21 @@ public class TTYLConfiguration extends Configuration {
     @NotNull
     private final ServiceConfiguration serviceConfiguration;
 
+    @Valid
+    @NotNull
+    private JedisFactory jedisFactory;
+
     @JsonCreator
     public TTYLConfiguration(
             @JsonProperty("twilio") final TwilioConfiguration twilioConfiguration,
             @JsonProperty("authentication") final AuthenticationConfiguration authenticationConfiguration,
-            @JsonProperty("service") final ServiceConfiguration serviceConfiguration
+            @JsonProperty("service") final ServiceConfiguration serviceConfiguration,
+            @JsonProperty("redis") final JedisFactory jedisFactory
     ) {
         this.twilioConfiguration = twilioConfiguration;
         this.authenticationConfiguration = authenticationConfiguration;
         this.serviceConfiguration = serviceConfiguration;
+        this.jedisFactory = jedisFactory;
     }
 
     public TwilioConfiguration getTwilioConfiguration() {
@@ -42,5 +49,9 @@ public class TTYLConfiguration extends Configuration {
 
     public ServiceConfiguration getServiceConfiguration() {
         return serviceConfiguration;
+    }
+
+    public JedisFactory getJedisFactory() {
+        return jedisFactory;
     }
 }
