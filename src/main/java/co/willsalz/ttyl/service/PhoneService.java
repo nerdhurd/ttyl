@@ -25,13 +25,10 @@ public class PhoneService {
     }
 
     public Call makeCall(final String to) {
-
         final PhoneNumber to_ = new PhoneNumber(to);
         final URI uri = UriBuilder.fromUri(baseURL)
                 .path(ConnectCallResource.class)
                 .build();
         return new CallCreator(to_, from_, uri).create(client);
-
     }
-
 }

@@ -8,6 +8,11 @@ server:
   # disable admin
   adminConnectors: []
 
+httpClient: {}
+
+representativeClient:
+  baseUri: http://whoismyrepresentative.com/
+
 logging:
   level: INFO
   appenders:
