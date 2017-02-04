@@ -1,11 +1,13 @@
 package co.willsalz.ttyl.application;
 
 import co.willsalz.ttyl.configuration.TTYLConfiguration;
+import co.willsalz.ttyl.gateways.RepresentativeLookupGateway;
 import co.willsalz.ttyl.healthchecks.TwilioHealthCheck;
 import co.willsalz.ttyl.middleware.CsrfFilter;
 import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.repositories.PhoneNumberRepository;
 import co.willsalz.ttyl.resources.v1.ConnectCallResource;
+import co.willsalz.ttyl.resources.v1.RepresentativeResource;
 import co.willsalz.ttyl.resources.v1.StartCallResource;
 import co.willsalz.ttyl.security.TwilioAuthenticator;
 import co.willsalz.ttyl.service.CallService;
@@ -17,6 +19,7 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
@@ -25,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPool;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.container.ContainerRequestFilter;
 
 public class TTYLApplication extends Application<TTYLConfiguration> {
@@ -101,6 +105,17 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
                 config.getTwilioConfiguration().getPhoneNumbers()
         );
 
+        // Gateways
+        final Client client = new JerseyClientBuilder(env)
+                .using(config.getJerseyClientConfiguration())
+                .build(getName());
+
+        final RepresentativeLookupGateway representativeLookupGateway = new RepresentativeLookupGateway(
+                client,
+                config.getRepresentativeClientConfiguration().getBaseUri(),
+                env.getObjectMapper()
+        );
+
         // Services
         final CallService callService = new CallService(
                 twilioClient,
@@ -111,9 +126,11 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
                 phoneNumbers
         );
 
+
         // Register Resources
         env.jersey().register(new StartCallResource(callService));
         env.jersey().register(new ConnectCallResource());
+        env.jersey().register(new RepresentativeResource(representativeLookupGateway));
 
         // Register Healthchecks
         env.healthChecks().register("twilio", new TwilioHealthCheck(twilioClient));
