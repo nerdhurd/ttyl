@@ -2,6 +2,12 @@ server:
   type: default
   rootPath: /api/
 
+
+representativeClient:
+  baseUri: http://whoismyrepresentative.com/
+
+httpClient: {}
+
 twilio:
   accountSid: FAKE_ACCOUNT_SID
   authToken: FAKE_AUTH_TOKEN
