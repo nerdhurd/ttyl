@@ -1,20 +1,17 @@
 package co.willsalz.ttyl.gateways;
 
-import co.willsalz.ttyl.entities.RepresentativeInfo;
-import com.fasterxml.jackson.core.type.TypeReference;
+import co.willsalz.ttyl.entities.Representatives;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.representer.Represent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
-/**
- * Created by ahb5 on 1/27/17.
- */
 public class RepresentativeLookupGateway {
+    private static final Logger logger = LoggerFactory.getLogger(RepresentativeLookupGateway.class);
     private final Client client;
     private final String baseUri;
     private final ObjectMapper objectMapper;
@@ -25,15 +22,17 @@ public class RepresentativeLookupGateway {
         this.objectMapper = objectMapper;
     }
 
-    public List<RepresentativeInfo> getRepresentativesByZip(String zip) {
-        Response response = client.target(baseUri)
+    public Representatives getRepresentativesByZip(String zip) {
+        Response response =  client.target(baseUri)
                 .path("getall_mems.php")
                 .queryParam("zip", zip)
                 .queryParam("output", "json")
-                .request(MediaType.APPLICATION_JSON).get();
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        response.getHeaders().putSingle(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
 
-        new TypeReference<>()
-        objectMapper.readValue(response.readEntity(String.class), new GenericType<List>(RepresentativeInfo.class));
-        response.getEntity();
+        return response.readEntity(Representatives.class);
     }
+
+
 }
