@@ -6,7 +6,6 @@ ttyl MPV
         * ~~make ajax request to call api~~, display error
         * make call to representative API, we may have to end up hosting this ourselves. 
 
-
 * make_call endpoint
     * make it connect two phone numbers
 

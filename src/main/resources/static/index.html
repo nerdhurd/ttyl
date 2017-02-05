@@ -14,22 +14,12 @@
 <body>
 <div class="container">
     <h1 class="text-center">TTYL</h1>
-    <form id="register-form" class="form-horizontal" action="/api/v1/call" method="post">
+    <form id="lookup-legislators-form" class="form-horizontal">
         <!-- Text input-->
         <div class="form-group">
-            <label class="col-md-4 control-label" for="phone-number">Phone Number</label>
+            <label class="col-md-4 control-label" for="zip">Your Zipcode</label>
             <div class="col-md-5">
-                <input id="phone-number" name="phone-number" type="tel" placeholder="+1 800 867 5309"
-                       class="form-control"/>
-            </div>
-        </div>
-
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="zip">Zipcode</label>
-            <div class="col-md-5">
-                <input id="zip" name="zip" type="number" inputmode="numeric" pattern="[0-9*]" placeholder="90210"
-                       class="form-control"/>
+                <input id="zip" name="zip" type="number" inputmode="numeric" pattern="[0-9*]" placeholder="90210" class="form-control" />
             </div>
         </div>
 
@@ -37,7 +27,24 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="go"></label>
             <div class="col-md-4">
-                <button id="go" name="go" type="submit" class="btn btn-primary">Go</button>
+                <button id="find-leg" name="search" type="submit" class="btn btn-primary">Find Your Legislators</button>
+            </div>
+        </div>
+    </form>
+    <form id="register-form" class="form-horizontal">
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="phone-number">Your Phone Number</label>
+            <div class="col-md-5">
+                <input id="phone-number" name="phone-number" type="tel" placeholder="+1 800 867 5309" class="form-control" />
+            </div>
+        </div>
+
+        <!-- Button -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="go"></label>
+            <div class="col-md-4">
+                <button id="go" name="go" type="submit" class="disabled btn btn-primary">Go</button>
             </div>
         </div>
     </form>
