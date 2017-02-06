@@ -8,6 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -25,18 +27,22 @@ import static org.mockito.Mockito.when;
 public class StartCallResourceTest {
 
     private final String somePhoneNumber = "1 (800) 934-6489";
+    private String anotherPhoneNumber = "18001234567";
     private final CallService callService = mock(CallService.class);
     private final Call call = mock(Call.class);
+    private final Jedis jedis = mock(Jedis.class);
+    private final JedisPool jedisPool = mock(JedisPool.class);
 
     @Rule
     public final ResourceTestRule resource = ResourceTestRule
             .builder()
-            .addResource(new StartCallResource(callService))
+            .addResource(new StartCallResource(callService, jedisPool))
             .build();
 
     @Before
     public void setUp() throws Exception {
         when(callService.makeCall(anyString())).thenReturn(call);
+        when(jedisPool.getResource()).thenReturn(jedis);
     }
 
     @After
@@ -51,7 +57,10 @@ public class StartCallResourceTest {
         final Response res = resource.client()
                 .target(UriBuilder.fromPath("/v1/call"))
                 .request()
-                .post(Entity.json(new StartCallRequest(somePhoneNumber)));
+                .post(Entity.json(new StartCallRequest(
+                        somePhoneNumber,
+                        anotherPhoneNumber
+                )));
 
         assertThat(res.getStatus()).isEqualTo(Response.Status.NO_CONTENT.getStatusCode());
 
