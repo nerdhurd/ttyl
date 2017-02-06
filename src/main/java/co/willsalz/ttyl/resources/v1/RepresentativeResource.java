@@ -1,7 +1,7 @@
 package co.willsalz.ttyl.resources.v1;
 
 import co.willsalz.ttyl.entities.Representatives;
-import co.willsalz.ttyl.gateways.RepresentativeLookupGateway;
+import co.willsalz.ttyl.gateways.RepresentativeGateway;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.ws.rs.Consumes;
@@ -15,14 +15,14 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class RepresentativeResource {
-    private RepresentativeLookupGateway representativeLookupGateway;
+    private RepresentativeGateway representativeGateway;
 
-    public RepresentativeResource(RepresentativeLookupGateway representativeLookupGateway) {
-        this.representativeLookupGateway = representativeLookupGateway;
+    public RepresentativeResource(RepresentativeGateway representativeGateway) {
+        this.representativeGateway = representativeGateway;
     }
 
     @GET
     public Representatives getRepresentatives(@QueryParam("zip") @NotEmpty String zip) {
-        return representativeLookupGateway.getRepresentativesByZip(zip);
+        return representativeGateway.getRepresentativesByZip(zip);
     }
 }
