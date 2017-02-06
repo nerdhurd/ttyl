@@ -1,5 +1,6 @@
 package co.willsalz.ttyl.resources.v1;
 
+import co.willsalz.ttyl.entities.TwilioCallRequest;
 import co.willsalz.ttyl.middleware.CsrfFilter;
 import com.codahale.metrics.annotation.Timed;
 import com.twilio.twiml.Dial;
@@ -10,13 +11,15 @@ import com.twilio.twiml.TwiMLException;
 import com.twilio.twiml.VoiceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.annotation.security.PermitAll;
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 @Path("v1/connectCall")
@@ -26,24 +29,32 @@ import javax.ws.rs.core.MediaType;
 public class ConnectCallResource {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectCallResource.class);
+    private final JedisPool pool;
+
+    public ConnectCallResource(final JedisPool pool) {
+        this.pool = pool;
+    }
 
     @POST
     @Timed
-    public TwiML connectCall(@Context HttpServletRequest req) throws TwiMLException {
+    public TwiML connectCall(@NotNull @Valid final TwilioCallRequest req) throws TwiMLException {
 
-        // TODO(wjs): lookup ephemeral call [ phone #, zip, etc ]
+        final String to;
+        try (final Jedis redis = pool.getResource()) {
+            to = redis.get(req.getCallSid());
+        }
 
         // Build our response
         final VoiceResponse voiceResponse = new VoiceResponse.Builder()
                 .say(
-                        new Say.Builder("Connecting you now…")
+                        new Say.Builder("Connecting you to now…")
                                 .voice(Say.Voice.ALICE)
                                 .build()
                 )
                 .dial(
                         new Dial.Builder()
                                 .number(
-                                        new Number.Builder("+15005550006")
+                                        new Number.Builder(to)
                                                 .build()
                                 )
                                 .build()

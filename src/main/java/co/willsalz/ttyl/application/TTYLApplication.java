@@ -127,8 +127,8 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
 
 
         // Register Resources
-        env.jersey().register(new StartCallResource(callService));
-        env.jersey().register(new ConnectCallResource());
+        env.jersey().register(new StartCallResource(callService, redisPool));
+        env.jersey().register(new ConnectCallResource(redisPool));
         env.jersey().register(new RepresentativeResource(representativeGateway));
 
         // Register Healthchecks

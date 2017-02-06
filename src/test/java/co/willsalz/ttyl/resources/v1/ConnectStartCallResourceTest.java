@@ -13,6 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -20,6 +22,12 @@ import javax.ws.rs.core.Response;
 import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class ConnectStartCallResourceTest {
 
@@ -28,6 +36,9 @@ public class ConnectStartCallResourceTest {
     private static final String REALM = "twilio";
 
     private final Base64.Encoder encoder = Base64.getEncoder();
+
+    private final Jedis jedis = mock(Jedis.class);
+    private final JedisPool redisPool = mock(JedisPool.class);
 
     @Rule
     public ResourceTestRule rule = ResourceTestRule
@@ -38,11 +49,14 @@ public class ConnectStartCallResourceTest {
                     .setRealm(REALM)
                     .buildAuthFilter()))
             .addProvider(RolesAllowedDynamicFeature.class)
-            .addResource(new ConnectCallResource())
+            .addResource(new ConnectCallResource(redisPool))
             .build();
 
     @Before
     public void setUp() throws Exception {
+        when(redisPool.getResource()).thenReturn(jedis);
+        when(jedis.get(anyString())).thenReturn("someValue");
+        verifyNoMoreInteractions(jedis, redisPool);
     }
 
     @After
@@ -75,6 +89,9 @@ public class ConnectStartCallResourceTest {
 
         final String body = response.readEntity(String.class);
         assertThat(body).contains("<Dial>");
+
+        verify(jedis, times(1)).get(anyString());
+        verify(redisPool, times(1)).getResource();
     }
 
 }
