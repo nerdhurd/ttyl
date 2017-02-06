@@ -5,6 +5,11 @@ server:
   applicationConnectors:
     - type: http
       port: ${PORT:-8888}
+  # disable admin
+  adminConnectors: []
+  # disable request logging
+  requestLog:
+    appenders: []
 
 httpClient: {}
 
