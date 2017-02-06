@@ -1,6 +1,6 @@
 package co.willsalz.ttyl.resources.v1;
 
-import co.willsalz.ttyl.entities.CallRequest;
+import co.willsalz.ttyl.entities.StartCallRequest;
 import co.willsalz.ttyl.service.CallService;
 import com.twilio.rest.api.v2010.account.Call;
 import io.dropwizard.testing.junit.ResourceTestRule;
@@ -51,7 +51,7 @@ public class StartCallResourceTest {
         final Response res = resource.client()
                 .target(UriBuilder.fromPath("/v1/call"))
                 .request()
-                .post(Entity.json(new CallRequest(somePhoneNumber)));
+                .post(Entity.json(new StartCallRequest(somePhoneNumber)));
 
         assertThat(res.getStatus()).isEqualTo(Response.Status.NO_CONTENT.getStatusCode());
 

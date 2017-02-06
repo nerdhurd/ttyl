@@ -1,6 +1,6 @@
 package co.willsalz.ttyl.resources.v1;
 
-import co.willsalz.ttyl.entities.CallRequest;
+import co.willsalz.ttyl.entities.StartCallRequest;
 import co.willsalz.ttyl.service.CallService;
 import com.codahale.metrics.annotation.Timed;
 import com.twilio.rest.api.v2010.account.Call;
@@ -27,9 +27,9 @@ public class StartCallResource {
 
     @POST
     @Timed
-    public Response startCall(@NotNull @Valid final CallRequest callRequest) {
+    public Response startCall(@NotNull @Valid final StartCallRequest startCallRequest) {
 
-        final Call call = callService.makeCall(callRequest.getTo());
+        final Call call = callService.makeCall(startCallRequest.getTo());
 
         // TODO(wjs): store call [ phone #, zip, etc ] in ephemeral DB for later retrival
 
