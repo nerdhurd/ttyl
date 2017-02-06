@@ -1,7 +1,7 @@
 package co.willsalz.ttyl.application;
 
 import co.willsalz.ttyl.configuration.TTYLConfiguration;
-import co.willsalz.ttyl.gateways.RepresentativeLookupGateway;
+import co.willsalz.ttyl.gateways.RepresentativeGateway;
 import co.willsalz.ttyl.healthchecks.TwilioHealthCheck;
 import co.willsalz.ttyl.middleware.CsrfFilter;
 import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
@@ -99,6 +99,9 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         // Clients
         final TwilioRestClient twilioClient = config.getTwilioConfiguration().build(env);
         final JedisPool redisPool = this.jedisBundle.getPool();
+        final Client client = new JerseyClientBuilder(env)
+                .using(config.getJerseyClientConfiguration())
+                .build(getName());
 
         // Repositories + Gateways
         final PhoneNumberRepository phoneNumbers = new PhoneNumberRepository(
@@ -106,14 +109,10 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         );
 
         // Gateways
-        final Client client = new JerseyClientBuilder(env)
-                .using(config.getJerseyClientConfiguration())
-                .build(getName());
 
-        final RepresentativeLookupGateway representativeLookupGateway = new RepresentativeLookupGateway(
+        final RepresentativeGateway representativeGateway = new RepresentativeGateway(
                 client,
-                config.getRepresentativeClientConfiguration().getBaseUri(),
-                env.getObjectMapper()
+                config.getRepresentativeClientConfiguration().getBaseUri()
         );
 
         // Services
@@ -130,7 +129,7 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         // Register Resources
         env.jersey().register(new StartCallResource(callService));
         env.jersey().register(new ConnectCallResource());
-        env.jersey().register(new RepresentativeResource(representativeLookupGateway));
+        env.jersey().register(new RepresentativeResource(representativeGateway));
 
         // Register Healthchecks
         env.healthChecks().register("twilio", new TwilioHealthCheck(twilioClient));
