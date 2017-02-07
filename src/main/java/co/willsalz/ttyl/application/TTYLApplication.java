@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.JedisPool;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import java.io.IOException;
 
 public class TTYLApplication extends Application<TTYLConfiguration> {
 
@@ -93,9 +95,17 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
                 .buildAuthFilter();
 
         // Register Middleware
-        env.jersey().register(new TwimlMessageBodyWriter());
-        env.jersey().register(new CsrfFilter());
         env.jersey().register(new AuthDynamicFeature(authFilter));
+        env.jersey().register(new CsrfFilter());
+        env.jersey().register(new ContainerRequestFilter() {
+            private final Logger requestLogger = LoggerFactory.getLogger("request-logger");
+
+            @Override
+            public void filter(ContainerRequestContext requestContext) throws IOException {
+                requestLogger.info("Inbound Request: {}", requestContext);
+            }
+        });
+        env.jersey().register(new TwimlMessageBodyWriter());
 
         // Clients
         final TwilioRestClient twilioClient = config.getTwilioConfiguration().build(env);
