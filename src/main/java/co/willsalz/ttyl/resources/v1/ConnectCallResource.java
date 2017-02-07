@@ -39,29 +39,30 @@ public class ConnectCallResource {
     @Timed
     public TwiML connectCall(@NotNull @Valid final TwilioCallRequest req) throws TwiMLException {
 
-        final String to;
         try (final Jedis redis = pool.getResource()) {
-            to = redis.get(req.getCallSid());
+            final String to = redis.get(req.getCallSid());
+
+            // Build our response
+            final VoiceResponse voiceResponse = new VoiceResponse.Builder()
+                    .say(
+                            new Say.Builder("Connecting you to now…")
+                                    .voice(Say.Voice.ALICE)
+                                    .build()
+                    )
+                    .dial(
+                            new Dial.Builder()
+                                    .number(
+                                            new Number.Builder(to)
+                                                    .build()
+                                    )
+                                    .hangupOnStar(true)
+                                    .build()
+                    )
+                    .build();
+
+            // Return TwiML Response
+            return voiceResponse;
         }
 
-        // Build our response
-        final VoiceResponse voiceResponse = new VoiceResponse.Builder()
-                .say(
-                        new Say.Builder("Connecting you to now…")
-                                .voice(Say.Voice.ALICE)
-                                .build()
-                )
-                .dial(
-                        new Dial.Builder()
-                                .number(
-                                        new Number.Builder(to)
-                                                .build()
-                                )
-                                .build()
-                )
-                .build();
-
-        // Return TwiML Response
-        return voiceResponse;
     }
 }

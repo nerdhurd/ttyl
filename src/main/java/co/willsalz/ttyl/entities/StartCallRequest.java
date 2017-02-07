@@ -12,8 +12,8 @@ public class StartCallRequest {
     private final String to;
 
     @JsonCreator
-    public StartCallRequest(@JsonProperty("from") final String from,
-                            @JsonProperty("to") final String to) {
+    public StartCallRequest(@JsonProperty("from_phone_number") final String from,
+                            @JsonProperty("to_phone_number") final String to) {
         this.from = from;
         this.to = to;
     }

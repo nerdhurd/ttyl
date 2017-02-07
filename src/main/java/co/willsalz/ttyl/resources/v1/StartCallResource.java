@@ -38,7 +38,7 @@ public class StartCallResource {
     @Timed
     public Response startCall(@NotNull @Valid final StartCallRequest req) {
 
-        final Call call = callService.makeCall(req.getTo());
+        final Call call = callService.makeCall(req.getFrom());
 
         try (final Jedis redis = pool.getResource()) {
             redis.setex(

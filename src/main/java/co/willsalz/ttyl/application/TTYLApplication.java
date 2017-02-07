@@ -6,6 +6,7 @@ import co.willsalz.ttyl.healthchecks.TwilioHealthCheck;
 import co.willsalz.ttyl.middleware.CsrfFilter;
 import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.repositories.PhoneNumberRepository;
+import co.willsalz.ttyl.resources.v1.CallEndedResource;
 import co.willsalz.ttyl.resources.v1.ConnectCallResource;
 import co.willsalz.ttyl.resources.v1.RepresentativeResource;
 import co.willsalz.ttyl.resources.v1.StartCallResource;
@@ -109,7 +110,6 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
         );
 
         // Gateways
-
         final RepresentativeGateway representativeGateway = new RepresentativeGateway(
                 client,
                 config.getRepresentativeClientConfiguration().getBaseUri()
@@ -125,11 +125,11 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
                 phoneNumbers
         );
 
-
         // Register Resources
         env.jersey().register(new StartCallResource(callService, redisPool));
         env.jersey().register(new ConnectCallResource(redisPool));
         env.jersey().register(new RepresentativeResource(representativeGateway));
+        env.jersey().register(new CallEndedResource(redisPool));
 
         // Register Healthchecks
         env.healthChecks().register("twilio", new TwilioHealthCheck(twilioClient));
