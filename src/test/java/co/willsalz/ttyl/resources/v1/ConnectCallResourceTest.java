@@ -1,7 +1,7 @@
 package co.willsalz.ttyl.resources.v1;
 
+import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.security.TwilioAuthenticator;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
@@ -17,6 +17,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Base64;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class ConnectStartCallResourceTest {
+public class ConnectCallResourceTest {
 
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
@@ -48,6 +49,7 @@ public class ConnectStartCallResourceTest {
                     .setAuthenticator(new TwilioAuthenticator(new BasicCredentials(USERNAME, PASSWORD)))
                     .setRealm(REALM)
                     .buildAuthFilter()))
+            .addProvider(new TwimlMessageBodyWriter())
             .addProvider(RolesAllowedDynamicFeature.class)
             .addResource(new ConnectCallResource(redisPool))
             .build();
@@ -68,7 +70,7 @@ public class ConnectStartCallResourceTest {
         final Response response = rule.client()
                 .target("/v1/connectCall")
                 .request(MediaType.APPLICATION_XML)
-                .post(Entity.json(ImmutableMap.of()));
+                .post(Entity.form(new Form("foo", "bar")));
 
         assertThat(response.getStatus()).isEqualTo(Response.Status.UNAUTHORIZED.getStatusCode());
     }
@@ -83,12 +85,12 @@ public class ConnectStartCallResourceTest {
                 .target("/v1/connectCall")
                 .request(MediaType.APPLICATION_XML)
                 .header("Authorization", authorization)
-                .post(Entity.json(ImmutableMap.of()));
+                .post(Entity.form(new Form("CallSid", "abc123")));
 
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
 
         final String body = response.readEntity(String.class);
-        assertThat(body).contains("<Dial>");
+        assertThat(body).contains("<Number>someValue</Number>");
 
         verify(jedis, times(1)).get(anyString());
         verify(redisPool, times(1)).getResource();

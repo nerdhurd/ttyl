@@ -15,14 +15,16 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.annotation.security.PermitAll;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 @Path("v1/connectCall")
 @Produces(MediaType.APPLICATION_XML)
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @PermitAll
 @CsrfFilter.CsrfFilterBypass
 public class ConnectCallResource {
@@ -36,7 +38,7 @@ public class ConnectCallResource {
 
     @POST
     @Timed
-    public TwiML connectCall(@NotEmpty @QueryParam("CallSid") final String callSid) throws TwiMLException {
+    public TwiML connectCall(@NotEmpty @FormParam("CallSid") final String callSid) throws TwiMLException {
 
         try (final Jedis redis = pool.getResource()) {
             final String to = redis.get(callSid);
