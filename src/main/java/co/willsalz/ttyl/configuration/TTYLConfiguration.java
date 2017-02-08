@@ -35,6 +35,10 @@ public class TTYLConfiguration extends Configuration {
     @NotNull
     private final RepresentativeClientConfiguration representativeClientConfiguration;
 
+    @Valid
+    @NotNull
+    private final GoogleMapsConfiguration googleMapsConfiguration;
+
     @JsonCreator
     public TTYLConfiguration(
             @JsonProperty("twilio") final TwilioConfiguration twilioConfiguration,
@@ -42,14 +46,15 @@ public class TTYLConfiguration extends Configuration {
             @JsonProperty("service") final ServiceConfiguration serviceConfiguration,
             @JsonProperty("redis") final JedisFactory jedisFactory,
             @JsonProperty("httpClient") final JerseyClientConfiguration jerseyClientConfiguration,
-            @JsonProperty("representativeClient") final RepresentativeClientConfiguration representativeClientConfiguration
-    ) {
+            @JsonProperty("representativeClient") final RepresentativeClientConfiguration representativeClientConfiguration,
+            @JsonProperty("googleMaps") final GoogleMapsConfiguration googleMapsConfiguration) {
         this.twilioConfiguration = twilioConfiguration;
         this.authenticationConfiguration = authenticationConfiguration;
         this.serviceConfiguration = serviceConfiguration;
         this.jedisFactory = jedisFactory;
         this.jerseyClientConfiguration = jerseyClientConfiguration;
         this.representativeClientConfiguration = representativeClientConfiguration;
+        this.googleMapsConfiguration = googleMapsConfiguration;
     }
 
     public RepresentativeClientConfiguration getRepresentativeClientConfiguration() {
@@ -74,5 +79,9 @@ public class TTYLConfiguration extends Configuration {
 
     public JedisFactory getJedisFactory() {
         return jedisFactory;
+    }
+
+    public GoogleMapsConfiguration getGoogleMapsConfiguration() {
+        return googleMapsConfiguration;
     }
 }

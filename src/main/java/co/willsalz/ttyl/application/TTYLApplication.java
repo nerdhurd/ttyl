@@ -7,10 +7,12 @@ import co.willsalz.ttyl.middleware.CsrfFilter;
 import co.willsalz.ttyl.middleware.TwimlMessageBodyWriter;
 import co.willsalz.ttyl.repositories.PhoneNumberRepository;
 import co.willsalz.ttyl.resources.v1.ConnectCallResource;
+import co.willsalz.ttyl.resources.v1.GeocodingResource;
 import co.willsalz.ttyl.resources.v1.RepresentativeResource;
 import co.willsalz.ttyl.resources.v1.StartCallResource;
 import co.willsalz.ttyl.security.TwilioAuthenticator;
 import co.willsalz.ttyl.service.CallService;
+import co.willsalz.ttyl.service.GeocodingService;
 import com.bendb.dropwizard.redis.JedisBundle;
 import com.bendb.dropwizard.redis.JedisFactory;
 import com.twilio.http.TwilioRestClient;
@@ -123,11 +125,15 @@ public class TTYLApplication extends Application<TTYLConfiguration> {
                         .orElseThrow(IllegalArgumentException::new),
                 phoneNumbers
         );
+        final GeocodingService geocodingService = new GeocodingService(
+                config.getGoogleMapsConfiguration().getGeoApiContext()
+        );
 
         // Register Resources
         env.jersey().register(new StartCallResource(callService, redisPool));
         env.jersey().register(new ConnectCallResource(redisPool));
         env.jersey().register(new RepresentativeResource(representativeGateway));
+        env.jersey().register(new GeocodingResource(geocodingService));
 
         // Register Healthchecks
         env.healthChecks().register("twilio", new TwilioHealthCheck(twilioClient));

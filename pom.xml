@@ -20,6 +20,7 @@
         <twilio.version>7.4.0</twilio.version>
         <junit.version>4.12</junit.version>
         <assertj.version>3.6.1</assertj.version>
+        <google-maps-services.version>0.1.17</google-maps-services.version>
     </properties>
 
     <dependencies>
@@ -63,6 +64,13 @@
             <groupId>com.bendb.dropwizard</groupId>
             <artifactId>dropwizard-redis</artifactId>
             <version>1.0.0-2</version>
+        </dependency>
+
+        <!-- Google Maps Services -->
+        <dependency>
+            <groupId>com.google.maps</groupId>
+            <artifactId>google-maps-services</artifactId>
+            <version>${google-maps-services.version}</version>
         </dependency>
 
         <!-- Test -->

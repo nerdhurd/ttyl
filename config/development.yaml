@@ -13,6 +13,10 @@ representativeClient:
 
 logging:
   level: INFO
+
+  loggers:
+    "com.google.maps": WARN
+
   appenders:
     - type: console
 
@@ -34,3 +38,6 @@ service:
 
 redis:
   url: ${REDIS_URL:-}
+
+googleMaps:
+  apiKey: ${GOOGLE_MAPS_API_KEY:-}
