@@ -4,12 +4,9 @@ import co.willsalz.ttyl.entities.Representatives;
 import co.willsalz.ttyl.gateways.RepresentativeGateway;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("v1/representatives")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -22,7 +19,11 @@ public class RepresentativeResource {
     }
 
     @GET
-    public Representatives getRepresentatives(@QueryParam("zip") @NotEmpty String zip) {
-        return representativeGateway.getRepresentativesByZip(zip);
+    public Representatives getRepresentatives(@QueryParam("zip") @NotEmpty String zip) throws WebApplicationException {
+        try {
+            return representativeGateway.getRepresentativesByZip(zip);
+        } catch (RepresentativeGateway.BadZipcodeException e) {
+            throw new WebApplicationException(e.getMessage(), Response.Status.BAD_REQUEST);
+        }
     }
 }

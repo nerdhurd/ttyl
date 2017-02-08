@@ -1,9 +1,12 @@
 package co.willsalz.ttyl.gateways;
 
 import co.willsalz.ttyl.entities.Representatives;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.ImmutableDescriptor;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -20,7 +23,13 @@ public class RepresentativeGateway {
         this.baseUri = baseUri;
     }
 
-    public Representatives getRepresentativesByZip(String zip) {
+    public static class BadZipcodeException extends Exception {
+        public BadZipcodeException(String message) {
+            super(message);
+        }
+    }
+
+    public Representatives getRepresentativesByZip(String zip) throws BadZipcodeException {
 
         final Response response = client.target(baseUri)
                 // TODO(willsalz): configurable or hard-coded
@@ -34,7 +43,13 @@ public class RepresentativeGateway {
         // to JSON so we can deserialize
         response.getHeaders().putSingle(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
 
-        return response.readEntity(Representatives.class);
+        try {
+            return response.readEntity(Representatives.class);
+        } catch (ProcessingException jsonException) {
+            throw new BadZipcodeException("That zipcode was bad");
+        }
+
+
     }
 
 

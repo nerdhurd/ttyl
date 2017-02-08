@@ -1,4 +1,5 @@
 function populate_legislators(legislators) {
+    console.log("Populating", legislators);
 
     // Ugh, how can this be the suggested way to do things. Fuck this language.
     var radio_form = $('<div id="radio-form" class="form-group">\
@@ -74,31 +75,29 @@ $(function() {
             headers: {
                 'x-requested-by': 'ttyl'
             },
-            data: JSON.stringify(post_data)
+            data: post_data
         });
     });
 
     $("#lookup-legislators-form").submit(function(e) {
         e.preventDefault();
+        $("#zip-container").removeClass("has-error");
+    
+        let zipcode = $("#zip").val();
 
         $.ajax({
-            url: "/api/vi/legislators",
+            url: "/api/v1/representatives",
             type: 'get',
+            data: { "zip": zipcode },
             error: function(e) {
-
-                response = [
-                    { name: "Nancy Pelosi", phone: "202-225-4965", district: "12" },
-                    { name: "Barbra Boxer", phone: "202-224-3553", district: "Junior Seat" },
-                    { name: "Dianne Feinstein", phone: "202-224-3841", district: "Senior Seat" }
-                ];
-
-                populate_legislators(response);
-                            
-
+                let response = e.responseJSON;
+                console.log(response);
+                $("#zip-container").addClass("has-error");
             },
-            success: function(s) {
-                console.log("WOOOO");
-                console.log(s);
+            success: function(response) {
+                console.log(response);
+
+                populate_legislators(response.representatives);
             }
         });
     });
