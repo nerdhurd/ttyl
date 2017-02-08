@@ -2,7 +2,6 @@ server:
   type: default
   rootPath: /api/
 
-
 representativeClient:
   baseUri: http://whoismyrepresentative.com/
 
@@ -23,3 +22,6 @@ service:
 
 redis:
   url: redis://localhost:6379
+
+googleMaps:
+  apiKey: FAKE_KEY
