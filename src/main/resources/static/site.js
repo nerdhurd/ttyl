@@ -75,7 +75,7 @@ $(function() {
             headers: {
                 'x-requested-by': 'ttyl'
             },
-            data: post_data
+            data: JSON.stringify(post_data)
         });
     });
 
