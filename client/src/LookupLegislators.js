@@ -9,6 +9,12 @@ class LookupLegislators extends Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.buttonClass = this.buttonClass.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log("will Receieve PRopes: ");
+        console.log(nextProps);
     }
 
     handleChange(e) {
@@ -17,8 +23,17 @@ class LookupLegislators extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        console.log("SUBMITTED");
-        console.log(this.state.zip);
+        if (this.props.submissionEnabled) {
+
+            console.log("SUBMITTED");
+            console.log(this.state.zip);
+
+            this.props.lookupFunc(this.state.zip);
+        }
+    }
+
+    buttonClass() {
+        return "btn btn-primary" + (this.props.submissionEnabled ? '' : ' disabled');
     }
 
     render() {
@@ -34,7 +49,7 @@ class LookupLegislators extends Component {
                 <div className="form-group">
                     <label className="col-md-4 control-label" htmlFor="search"></label>
                     <div className="col-md-4">
-                        <button id="find-leg" name="search" type="submit" className="btn btn-primary">Find Your Legislators</button>
+                        <button id="find-leg" name="search" type="submit" className={this.buttonClass()}>Find Your Legislators</button>
                     </div>
                 </div>
             </form>
