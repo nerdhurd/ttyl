@@ -16,6 +16,11 @@ ttyl MPV
     * hot loading server. Got to be able to build and change things fast
         * Apparently literally impossible on JAVA, WTF
 
+* Use React on the front end
+    * clone the current stuff (should be cleaner)
+    * have building the java server also build the client and put the files in the right place
+    * see wether to ship this to other people we need to eject
+
 MPV +1
 ------
 * Scheduling
