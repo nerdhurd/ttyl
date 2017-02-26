@@ -20,10 +20,7 @@ class TTYL extends Component {
         // if it successeds, we remote that block. 
         // if not, we set an error and re-enable the button.
         console.log("loking Them up: " + zipCode);
-        console.log(this);
         this.setState({ status: "looking_for_legislators" });
-        console.log(this.state.status);
-        console.log(this.state.status === "init");
 
         //this will be a fetch. but fake it
         const response = [
@@ -35,6 +32,12 @@ class TTYL extends Component {
         this.setState({status: "legislators_found", legislators: response});
 
     }
+    
+    callLegislator(legislator, myPhoneNumber) {
+        console.log("call them up!");
+        console.log(legislator);
+        console.log(myPhoneNumber);
+    }
 
     render() {
         const status = this.state.status;
@@ -43,7 +46,7 @@ class TTYL extends Component {
         if (status === "init" || status === "looking_for_legislators") {
             form = <LookupLegislators lookupFunc={this.lookupLegislators} submissionEnabled={status === "init"} />;
         } else {
-            form = <CallLegislator legislators={this.state.legislators} submissionEnabled={status === "legislators_found"} />
+            form = <CallLegislator callFunc={this.callLegislator} legislators={this.state.legislators} submissionEnabled={status === "legislators_found"} />
         }
 
         return (

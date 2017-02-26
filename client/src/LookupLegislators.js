@@ -12,11 +12,6 @@ class LookupLegislators extends Component {
         this.buttonClass = this.buttonClass.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        console.log("will Receieve PRopes: ");
-        console.log(nextProps);
-    }
-
     handleChange(e) {
         this.setState({zip: e.target.value});
     }
@@ -24,9 +19,6 @@ class LookupLegislators extends Component {
     handleSubmit(event) {
         event.preventDefault();
         if (this.props.submissionEnabled) {
-
-            console.log("SUBMITTED");
-            console.log(this.state.zip);
 
             this.props.lookupFunc(this.state.zip);
         }
